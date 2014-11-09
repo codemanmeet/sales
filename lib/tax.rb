@@ -34,7 +34,11 @@ class Tax
 				(item.getPrice() * @basic).round(2)
 			end
 		elsif @rate.has_key?(:import)
-			(item.getPrice() * @import).round(2)
+			if item.isImport?()
+				(item.getPrice() * @import).round(2)
+			else
+				0
+			end
 		end
 	end
 end
@@ -52,4 +56,29 @@ class ImportDuty < Tax
 end
 
 class ShoppingCart
+	def initialize(basicRate, importRate)
+		@total_tax = 0
+		@total = 0
+		@tax_sales = BasicTax.new(basicRate)
+		@tax_duty = ImportDuty.new(importRate)
+		@product_list = {}
+	end
+
+	def add(item, count=1)
+		@total_tax = @total_tax + (@tax_sales.calculateTax(item) + @tax_duty.calculateTax(item))*count
+		@total = @total + item.getPrice()*count
+		if @product_list.has_key?(item)
+			@product_list[item] = @product_list[item] + count
+		else
+			@product_list[item] = count
+		end
+	end
+
+	def getTotalTax()
+		@total_tax
+	end
+
+	def getTotal()
+		@total
+	end
 end

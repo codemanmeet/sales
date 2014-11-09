@@ -53,7 +53,48 @@ end
 describe ShoppingCart do
 
 	before do
-		@s = ShoppingCart.new
+		@s = ShoppingCart.new(0.1, 0.05)
+		@cd = Product.new("music CD", 14.99, false, false)
+		@importedChoc = Product.new("imported box of chocolates", 10.00, true, true)
+		@imported_perfume = Product.new("imported bottle of perfume", 27.99, false, true)
+		@perfume = Product.new("perfume", 18.99, false, false)
+		@pills = Product.new("packet of headache pills", 9.75, true, false)
+	end
+
+	it 'should create an empty shopping cart successfully' do
+		@s.getTotal.should == 0
+	end
+
+	it 'can add a product to the shopping cart' do
+		@s.add(@cd)
+		@s.getTotalTax.should == 1.50
+	end
+
+	it 'can add more than one product to the shopping cart' do
+		@s.add(@cd)
+		@s.add(@importedChoc)
+		@s.getTotalTax.should == 2.0
+	end
+
+	it 'can add multiple quantities of one product to the shopping cart' do
+		@s.add(@cd, 2)
+		@s.add(@cd, 2)
+		@s.getTotalTax.should == 6.0
+	end
+
+	it 'can print the receipt in the desired format' do
+		@cart = ShoppingCart.new(0.1, 0.05)
+		@cart.add(@imported_perfume)
+		@cart.add(@perfume)
+		@cart.add(@pills)
+		@cart.add(@importedChoc)
+
+		@cart.printReceipt().should == "1 imported bottle of perfume: 32.19\n
+1 bottle of perfume: 20.89\n
+1 packet of headache pills: 9.75\n
+1 imported box of chocolates: 11.85\n
+Sales Taxes: 6.70\n
+Total: 74.68"
 	end
 
 end

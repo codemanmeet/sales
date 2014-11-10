@@ -6,6 +6,10 @@ class Product
 		@imported = imported
 	end
 
+	def getName()
+		@name
+	end
+
 	def getPrice()
 		@price
 	end
@@ -55,23 +59,30 @@ class ImportDuty < Tax
 	end
 end
 
+class Float
+	def rounding()
+		(self*20).ceil/20.0
+	end
+end
+
 class ShoppingCart
 	def initialize(basicRate, importRate)
 		@total_tax = 0
 		@total = 0
 		@tax_sales = BasicTax.new(basicRate)
 		@tax_duty = ImportDuty.new(importRate)
-		@product_list = {}
+		@product_list = []
 	end
 
 	def add(item, count=1)
-		@total_tax = @total_tax + (@tax_sales.calculateTax(item) + @tax_duty.calculateTax(item))*count
-		@total = @total + item.getPrice()*count
-		if @product_list.has_key?(item)
-			@product_list[item] = @product_list[item] + count
-		else
-			@product_list[item] = count
-		end
+		@tax = (1.0*(@tax_sales.calculateTax(item) + @tax_duty.calculateTax(item))*count).rounding()
+		@total_tax = @total_tax + @tax
+
+		@item_with_tax = item.getPrice()*count + @tax
+		@total = @total + @item_with_tax
+
+		@string = count.to_s + " " + item.getName() + ": " + ('%.2f' % @item_with_tax).to_s
+		@product_list << @string
 	end
 
 	def getTotalTax()
@@ -80,5 +91,11 @@ class ShoppingCart
 
 	def getTotal()
 		@total
+	end
+
+	def printReceipt()
+		@product_list << ("Sales Taxes: " + ('%.2f' % @total_tax).to_s)
+		@product_list << ("Total: " + ('%.2f' % @total).to_s)
+		@product_list.join("\n")
 	end
 end

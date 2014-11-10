@@ -57,8 +57,9 @@ describe ShoppingCart do
 		@cd = Product.new("music CD", 14.99, false, false)
 		@importedChoc = Product.new("imported box of chocolates", 10.00, true, true)
 		@imported_perfume = Product.new("imported bottle of perfume", 27.99, false, true)
-		@perfume = Product.new("perfume", 18.99, false, false)
+		@perfume = Product.new("bottle of perfume", 18.99, false, false)
 		@pills = Product.new("packet of headache pills", 9.75, true, false)
+		@imported_choc = Product.new("imported box of chocolates", 11.25, true, true)
 	end
 
 	it 'should create an empty shopping cart successfully' do
@@ -87,14 +88,9 @@ describe ShoppingCart do
 		@cart.add(@imported_perfume)
 		@cart.add(@perfume)
 		@cart.add(@pills)
-		@cart.add(@importedChoc)
+		@cart.add(@imported_choc)
 
-		@cart.printReceipt().should == "1 imported bottle of perfume: 32.19\n
-1 bottle of perfume: 20.89\n
-1 packet of headache pills: 9.75\n
-1 imported box of chocolates: 11.85\n
-Sales Taxes: 6.70\n
-Total: 74.68"
+		@cart.printReceipt().should == "1 imported bottle of perfume: 32.19\n1 bottle of perfume: 20.89\n1 packet of headache pills: 9.75\n1 imported box of chocolates: 11.85\nSales Taxes: 6.70\nTotal: 74.68"
 	end
 
 end

@@ -1,3 +1,10 @@
+
+=begin
+	
+Author: Teri Leung
+	
+=end
+
 class Product
 	def initialize(name, price, excluded = false, imported = false)
 		@name = name
@@ -99,3 +106,74 @@ class ShoppingCart
 		@product_list.join("\n")
 	end
 end
+
+
+#Main Application
+
+cart = ShoppingCart.new(0.1, 0.05)
+getInput = true
+
+while (getInput)
+
+	puts "Product description?"
+
+	name = gets.chomp
+
+	#puts "name is #{name}"
+
+	puts "How many?"
+
+	quantity = gets.to_i
+
+	#puts "quantity is #{quantity}"
+
+	puts "Price per unit?"
+
+	price = gets.to_f
+
+	#puts "price is #{price}"
+
+	puts "Is it a book, food or medical item? (y/n)"
+
+	e = gets.chomp
+
+	if e == "Y" or e == "y" 
+		exempt = true
+	elsif e == "N" or e == "n"
+		exempt = false
+	else
+		puts "error"
+	end
+
+	puts "Is it imported?"
+
+	i = gets.chomp
+
+	if i == "Y" or i == "y" 
+		import = true
+	elsif i == "N" or i == "n"
+		import = false
+	else
+		puts "error"
+	end
+
+	item = Product.new(name, price, exempt, import)
+
+	cart.add(item, quantity)
+
+	puts "Add another item to the shopping cart? (y/n)"
+
+	again = gets.chomp
+
+	if (again == "Y" or again == "y")
+		getInput = true
+	elsif (again == "N" or again == "n")
+		getInput = false
+	else
+		puts "error"
+	end
+end
+
+puts "-----Receipt-----"
+puts cart.printReceipt()
+

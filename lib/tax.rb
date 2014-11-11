@@ -2,7 +2,27 @@
 =begin
 	
 Author: Teri Leung
-	
+Challenge problem: Sales Taxes
+Language: Ruby (version 2.1.2)
+
+
+
+Design and Assumptions:
+I've designed this problem by creating 3 classes: Product, Tax, and ShoppingCart.
+Product has the product description and price.  A product can be imported and/or exempted.
+Tax calculates the taxes for a product.  It also has a tax policy to determine which taxes apply.  Basic sales tax and import duty are both taxes.
+Shopping cart has products, their taxes, their prices, and also total taxes and total prices.
+
+In designing Product, I've assumed that books, foods and medical items as the same Product, since no information differentiating them exists.
+Future recommendation would be to create Books, Foods, and Medical Items as Product subclasses, as more information differentiating them exists.
+
+
+Instructions on how to run:
+1) Take one sales transaction.  Copy the input data, exclude any titles, and paste it into a text file
+2) Save this file as "input.txt" and place the file into the Sales folder
+3) Run lib/tax.rb
+4) Under Sales folder, open the newly created file "output.txt"
+
 =end
 
 class Product
@@ -110,70 +130,31 @@ end
 
 #Main Application
 
+keywords = []
+
+f = File.open("keywords.txt", "r")
+f.each_line do |line|
+	keywords << line.chomp
+end
+f.close
+
 cart = ShoppingCart.new(0.1, 0.05)
-getInput = true
 
-while (getInput)
-
-	puts "Product description?"
-
-	name = gets.chomp
-
-	#puts "name is #{name}"
-
-	puts "How many?"
-
-	quantity = gets.to_i
-
-	#puts "quantity is #{quantity}"
-
-	puts "Price per unit?"
-
-	price = gets.to_f
-
-	#puts "price is #{price}"
-
-	puts "Is it a book, food or medical item? (y/n)"
-
-	e = gets.chomp
-
-	if e == "Y" or e == "y" 
-		exempt = true
-	elsif e == "N" or e == "n"
-		exempt = false
-	else
-		puts "error"
-	end
-
-	puts "Is it imported?"
-
-	i = gets.chomp
-
-	if i == "Y" or i == "y" 
-		import = true
-	elsif i == "N" or i == "n"
-		import = false
-	else
-		puts "error"
-	end
+f = File.open("input.txt", "r")
+f.each_line do |line|
+	price = (line.split(" at "))[1].to_f
+	quantity = (line[0].split())[0].to_i
+	name = (line.split(" at "))[0].gsub(/[0-9]/,"").strip
+	import = line.include?("imported")
+	exempt = keywords.any? {|word| line.include?(word)}
 
 	item = Product.new(name, price, exempt, import)
-
 	cart.add(item, quantity)
-
-	puts "Add another item to the shopping cart? (y/n)"
-
-	again = gets.chomp
-
-	if (again == "Y" or again == "y")
-		getInput = true
-	elsif (again == "N" or again == "n")
-		getInput = false
-	else
-		puts "error"
-	end
 end
+f.close
 
-puts "-----Receipt-----"
-puts cart.printReceipt()
+f = File.open("output.txt", "w")
+f.write(cart.printReceipt())
+f.close
+
 
